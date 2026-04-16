@@ -15,11 +15,15 @@ Add the card to your dashboard:
 
 ```yaml
 type: custom:first-ha-card
-entity: sun.sun
+entity: sensor.temperature
+humidity_entity: sensor.humidity
+name: Wohnzimmer
 ```
 
 ## Configuration
 
-| Option   | Type   | Required | Description              |
-|----------|--------|----------|--------------------------|
-| `entity` | string | Yes      | The entity ID to display |
+| Option            | Type   | Required | Description                          |
+|-------------------|--------|----------|--------------------------------------|
+| `entity`          | string | Yes      | Temperature sensor entity ID         |
+| `humidity_entity` | string | Yes      | Humidity sensor entity ID            |
+| `name`            | string | No       | Custom name (default: friendly_name) |

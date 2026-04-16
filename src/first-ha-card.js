@@ -2,35 +2,85 @@ class FirstHACard extends HTMLElement {
   set hass(hass) {
     if (!this.content) {
       this.innerHTML = `
-        <ha-card header="First HA Card">
-          <div class="card-content"></div>
+        <ha-card>
+          <style>
+            .card-container {
+              padding: 16px;
+            }
+            .sensor-name {
+              font-size: 1.2em;
+              font-weight: bold;
+              text-align: center;
+              margin-bottom: 12px;
+            }
+            .values-row {
+              display: flex;
+              justify-content: space-between;
+            }
+            .value-box {
+              flex: 1;
+              text-align: center;
+            }
+            .value-label {
+              font-size: 0.85em;
+              color: var(--secondary-text-color);
+            }
+            .value {
+              font-size: 1.8em;
+              font-weight: bold;
+            }
+          </style>
+          <div class="card-container">
+            <div class="sensor-name"></div>
+            <div class="values-row">
+              <div class="value-box">
+                <div class="value-label">Temperatur</div>
+                <div class="value temp-value"></div>
+              </div>
+              <div class="value-box">
+                <div class="value-label">Luftfeuchtigkeit</div>
+                <div class="value hum-value"></div>
+              </div>
+            </div>
+          </div>
         </ha-card>
       `;
-      this.content = this.querySelector('.card-content');
+      this.content = this.querySelector('.card-container');
     }
 
-    const entityId = this.config.entity;
-    const state = hass.states[entityId];
-    const stateStr = state ? state.state : 'unavailable';
+    const tempEntity = hass.states[this.config.entity];
+    const humEntity = hass.states[this.config.humidity_entity];
 
-    this.content.innerHTML = `
-      <p><strong>${entityId}:</strong> ${stateStr}</p>
-    `;
+    const name = this.config.name || (tempEntity ? tempEntity.attributes.friendly_name : this.config.entity);
+    const temp = tempEntity ? tempEntity.state : 'N/A';
+    const tempUnit = tempEntity ? tempEntity.attributes.unit_of_measurement || '°C' : '°C';
+    const hum = humEntity ? humEntity.state : 'N/A';
+    const humUnit = humEntity ? humEntity.attributes.unit_of_measurement || '%' : '%';
+
+    this.querySelector('.sensor-name').textContent = name;
+    this.querySelector('.temp-value').textContent = `${temp} ${tempUnit}`;
+    this.querySelector('.hum-value').textContent = `${hum} ${humUnit}`;
   }
 
   setConfig(config) {
     if (!config.entity) {
-      throw new Error('Please define an entity');
+      throw new Error('Please define an entity (temperature sensor)');
+    }
+    if (!config.humidity_entity) {
+      throw new Error('Please define a humidity_entity');
     }
     this.config = config;
   }
 
   getCardSize() {
-    return 1;
+    return 2;
   }
 
   static getStubConfig() {
-    return { entity: 'sun.sun' };
+    return {
+      entity: 'sensor.temperature',
+      humidity_entity: 'sensor.humidity',
+    };
   }
 }
 
