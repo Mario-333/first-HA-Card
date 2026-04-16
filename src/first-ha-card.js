@@ -323,7 +323,9 @@ class FirstHACard extends HTMLElement {
     return {
       title: 'Sensoren',
       sensors: [
-        { name: 'Wohnzimmer', temperature: 'sensor.temp_wohnzimmer', humidity: 'sensor.hum_wohnzimmer' },
+        { name: 'Schlafzimmer', temperature: 'sensor.temperature_76', humidity: 'sensor.temperature_77' },
+        { name: 'Wohnzimmer', temperature: 'sensor.wohnzimmer_innen_2', humidity: 'sensor.wohnzimmer_innen' },
+        { name: 'Flur', temperature: 'sensor.temperature_63', humidity: 'sensor.temperature_64' },
       ],
     };
   }
