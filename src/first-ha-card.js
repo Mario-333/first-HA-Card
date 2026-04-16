@@ -1,3 +1,5 @@
+console.info('%c FIRST-HA-CARD v3 loaded ', 'background: #03a9f4; color: #fff; font-weight: bold;');
+
 // ===================== VISUAL EDITOR =====================
 class FirstHACardEditor extends HTMLElement {
   constructor() {
@@ -333,5 +335,7 @@ window.customCards = window.customCards || [];
 window.customCards.push({
   type: 'first-ha-card',
   name: 'First HA Card',
-  description: 'My first custom Home Assistant card',
+  description: 'Sensor-Tabelle mit Temperatur und Luftfeuchtigkeit',
+  preview: true,
+  documentationURL: 'https://github.com/Mario-333/first-HA-Card',
 });
