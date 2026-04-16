@@ -1,4 +1,4 @@
-console.info('%c FIRST-HA-CARD v3 loaded ', 'background: #03a9f4; color: #fff; font-weight: bold;');
+console.info('%c FIRST-HA-CARD v4 loaded ', 'background: #03a9f4; color: #fff; font-weight: bold;');
 
 // ===================== VISUAL EDITOR =====================
 class FirstHACardEditor extends HTMLElement {
@@ -305,8 +305,8 @@ class FirstHACard extends HTMLElement {
         humidity: cfg.humidity_entity || '',
       }];
     }
-    if (!cfg.sensors || !Array.isArray(cfg.sensors) || cfg.sensors.length === 0) {
-      throw new Error('Please define at least one sensor in the sensors array');
+    if (!cfg.sensors || !Array.isArray(cfg.sensors)) {
+      cfg.sensors = [];
     }
     this.config = cfg;
   }
