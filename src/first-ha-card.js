@@ -144,6 +144,10 @@ class FirstHACard extends HTMLElement {
     return 1 + (this.config ? this.config.sensors.length : 1);
   }
 
+  static getConfigElement() {
+    return document.createElement('first-ha-card-editor');
+  }
+
   static getStubConfig() {
     return {
       title: 'Sensoren',
@@ -154,6 +158,152 @@ class FirstHACard extends HTMLElement {
   }
 }
 
+// ===================== VISUAL EDITOR =====================
+class FirstHACardEditor extends HTMLElement {
+  setConfig(config) {
+    this._config = { ...config };
+    this.render();
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+  }
+
+  render() {
+    if (!this._config) return;
+
+    const sensors = this._config.sensors || [];
+
+    this.innerHTML = `
+      <style>
+        .editor {
+          padding: 8px;
+        }
+        .editor label {
+          display: block;
+          font-weight: 500;
+          margin: 8px 0 4px;
+        }
+        .editor input {
+          width: 100%;
+          padding: 8px;
+          box-sizing: border-box;
+          border: 1px solid var(--divider-color, #ccc);
+          border-radius: 4px;
+          background: var(--card-background-color, #fff);
+          color: var(--primary-text-color, #000);
+        }
+        .sensor-block {
+          border: 1px solid var(--divider-color, #e0e0e0);
+          border-radius: 8px;
+          padding: 12px;
+          margin: 8px 0;
+          position: relative;
+        }
+        .sensor-block .sensor-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        .sensor-block .sensor-header strong {
+          font-size: 0.95em;
+        }
+        .btn-remove {
+          background: none;
+          border: none;
+          color: var(--error-color, #db4437);
+          cursor: pointer;
+          font-size: 1.2em;
+          padding: 4px 8px;
+        }
+        .btn-add {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          margin-top: 12px;
+          background: var(--primary-color, #03a9f4);
+          color: #fff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.95em;
+        }
+      </style>
+      <div class="editor">
+        <label>Titel</label>
+        <input type="text" id="title" value="${this._config.title || ''}" placeholder="z.B. Sensoren" />
+
+        <label>Sensoren</label>
+        ${sensors.map((s, i) => `
+          <div class="sensor-block">
+            <div class="sensor-header">
+              <strong>Sensor ${i + 1}</strong>
+              <button class="btn-remove" data-index="${i}" title="Entfernen">✕</button>
+            </div>
+            <label>Name</label>
+            <input type="text" data-index="${i}" data-field="name" value="${s.name || ''}" placeholder="z.B. Wohnzimmer" />
+            <label>Temperatur Entity</label>
+            <input type="text" data-index="${i}" data-field="temperature" value="${s.temperature || ''}" placeholder="sensor.temperatur_..." />
+            <label>Luftfeuchtigkeit Entity</label>
+            <input type="text" data-index="${i}" data-field="humidity" value="${s.humidity || ''}" placeholder="sensor.luftfeuchtigkeit_..." />
+          </div>
+        `).join('')}
+
+        <button class="btn-add" id="add-sensor">+ Sensor hinzufügen</button>
+      </div>
+    `;
+
+    // Title change
+    this.querySelector('#title').addEventListener('input', (e) => {
+      this._config = { ...this._config, title: e.target.value };
+      this._fireChanged();
+    });
+
+    // Sensor field changes
+    this.querySelectorAll('.sensor-block input').forEach((input) => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.index);
+        const field = e.target.dataset.field;
+        const sensors = [...this._config.sensors];
+        sensors[idx] = { ...sensors[idx], [field]: e.target.value };
+        this._config = { ...this._config, sensors };
+        this._fireChanged();
+      });
+    });
+
+    // Remove sensor
+    this.querySelectorAll('.btn-remove').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.dataset.index);
+        const sensors = [...this._config.sensors];
+        sensors.splice(idx, 1);
+        this._config = { ...this._config, sensors };
+        this._fireChanged();
+        this.render();
+      });
+    });
+
+    // Add sensor
+    this.querySelector('#add-sensor').addEventListener('click', () => {
+      const sensors = [...(this._config.sensors || []), { name: '', temperature: '', humidity: '' }];
+      this._config = { ...this._config, sensors };
+      this._fireChanged();
+      this.render();
+    });
+  }
+
+  _fireChanged() {
+    const event = new CustomEvent('config-changed', {
+      detail: { config: this._config },
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(event);
+  }
+}
+
+customElements.define('first-ha-card-editor', FirstHACardEditor);
 customElements.define('first-ha-card', FirstHACard);
 
 window.customCards = window.customCards || [];
