@@ -41,11 +41,11 @@ class FirstHACard extends HTMLElement {
             <div class="sensor-name"></div>
             <div class="values-row">
               <div class="value-box">
-                <div class="value-label"><ha-icon icon="mdi:thermometer"></ha-icon> Temperatur</div>
+                <div class="value-label"><ha-icon icon="mdi:thermometer"></ha-icon></div>
                 <div class="value temp-value"></div>
               </div>
               <div class="value-box">
-                <div class="value-label"><ha-icon icon="mdi:water-percent"></ha-icon> Luftfeuchtigkeit</div>
+                <div class="value-label"><ha-icon icon="mdi:water-percent"></ha-icon></div>
                 <div class="value hum-value"></div>
               </div>
             </div>
