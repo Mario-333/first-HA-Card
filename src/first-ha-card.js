@@ -113,14 +113,14 @@ class FirstHACardEditor extends HTMLElement {
     `;
 
     // Title change
-    this.querySelector('#title').addEventListener('input', (e) => {
+    this.querySelector('#title').addEventListener('change', (e) => {
       this._config = { ...this._config, title: e.target.value };
       this._fireChanged();
     });
 
     // Sensor field changes
     this.querySelectorAll('.sensor-block input').forEach((input) => {
-      input.addEventListener('input', (e) => {
+      input.addEventListener('change', (e) => {
         const idx = parseInt(e.target.dataset.index);
         const field = e.target.dataset.field;
         const sensors = [...this._config.sensors];
@@ -233,19 +233,6 @@ class FirstHACard extends HTMLElement {
             <div class="card-title"></div>
             <table class="sensor-table">
               <thead>
-                <tr class="table-header">
-                  <td class="col-name"></td>
-                  <td class="col-temp">
-                    <div class="sensor-value">
-                      <ha-icon icon="mdi:thermometer"></ha-icon>
-                    </div>
-                  </td>
-                  <td class="col-hum">
-                    <div class="sensor-value">
-                      <ha-icon icon="mdi:water-percent"></ha-icon>
-                    </div>
-                  </td>
-                </tr>
               </thead>
               <tbody class="sensor-rows"></tbody>
             </table>
